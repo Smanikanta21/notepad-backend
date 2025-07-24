@@ -1,11 +1,24 @@
 const express = require('express')
 const cookieParser = require('cookie-parser')
+const passport = require('passport');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const auth = express.Router()
 const { User } = require('../models/User')
 require('dotenv').config()
 auth.use(cookieParser())
+
+router.get('/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+router.get('/google/callback',
+  passport.authenticate('google', {
+    successRedirect: 'https://note-abqtry4cv-smanikanta21s-projects.vercel.app/home',
+    failureRedirect: 'https://note-abqtry4cv-smanikanta21s-projects.vercel.app/login',
+    session: false
+  })
+);
 
 auth.post('/login' , async (req , res) => {
    const { email , password } = req.body
