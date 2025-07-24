@@ -1,5 +1,7 @@
 const connectDB = require('../database/dbConfig')
 const express = require('express')
+const session = require('express-session')
+const cookieParser = require('cookie-parser')
 const auth = require('../auth/auth')
 const app = express()
 const setupGooglePassport = require('../googleoauth/passport.js')
@@ -15,7 +17,7 @@ app.use(cors({
 }))
 
 app.use(session({
-    secret: process.env.JWT_SECRET || 'secret', // secure it
+    secret: process.env.JWT_SECRET || 'secret',
     resave: false,
     saveUninitialized: false,
     cookie: {
