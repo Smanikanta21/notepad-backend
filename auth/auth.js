@@ -1,5 +1,6 @@
 const express = require('express')
 const cookieParser = require('cookie-parser')
+require('../googleoauth/passport.js')
 const passport = require('passport');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -14,8 +15,8 @@ auth.get('/google',
 
 auth.get('/google/callback',
   passport.authenticate('google', {
-    successRedirect: 'https://note-abqtry4cv-smanikanta21s-projects.vercel.app/home',
-    failureRedirect: 'https://note-abqtry4cv-smanikanta21s-projects.vercel.app/login',
+    successRedirect: 'https://note-pad-red.vercel.app/home',
+    failureRedirect: 'https://note-pad-red.vercel.app/login',
     session: false
   })
 );

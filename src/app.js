@@ -2,13 +2,13 @@ const connectDB = require('../database/dbConfig')
 const express = require('express')
 const auth = require('../auth/auth')
 const app = express()
-require('./auth/passport')
-const passport = require('./auth/passport')
+require('../googleoauth/passport.js')
+const passport = require('passport')
 const cors = require('cors')
 require('dotenv').config()
 app.use(express.json())
 app.use(cors({
-    origin : ['http://localhost:5173', "https://note-abqtry4cv-smanikanta21s-projects.vercel.app"],
+    origin : ['http://localhost:5173', "https://note-pad-red.vercel.app"],
     credentials : true
 }))
 app.use(passport.initialize())
