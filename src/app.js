@@ -6,7 +6,7 @@ const cors = require('cors')
 require('dotenv').config()
 app.use(express.json())
 app.use(cors({
-    origin : 'https://localhost;5173',
+    origin : ['https://localhost:5173', "https://note-abqtry4cv-smanikanta21s-projects.vercel.app"],
     credentials : true
 }))
 app.use('/auth' , auth)
