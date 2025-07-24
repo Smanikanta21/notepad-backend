@@ -7,11 +7,24 @@ require('../googleoauth/passport.js')
 const passport = require('passport')
 const cors = require('cors')
 require('dotenv').config()
+
 app.use(express.json())
 app.use(cors({
     origin : ['http://localhost:5173', "https://note-pad-red.vercel.app"],
     credentials : true
 }))
+
+app.use(session({
+    secret: process.env.JWT_SECRET || 'secret', // secure it
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none'
+    }
+}));
+
 app.use(passport.initialize())
 app.use(passport.session())
 app.use('/auth' , auth)
