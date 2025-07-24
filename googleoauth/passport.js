@@ -1,4 +1,5 @@
 require('dotenv').config();
+console.log("GOOGLE_CLIENT_ID from env:", process.env.GOOGLE_CLIENT_ID);
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
@@ -37,4 +38,3 @@ passport.deserializeUser((user, done) => {
     // For now, we will just return the user
     done(null, user);
 })
-console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
