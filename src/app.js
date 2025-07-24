@@ -6,13 +6,14 @@ const cors = require('cors')
 require('dotenv').config()
 app.use(express.json())
 app.use(cors({
-    origin : ['https://localhost:5173', "https://note-abqtry4cv-smanikanta21s-projects.vercel.app"],
+    origin : ['http://localhost:5173', "https://note-abqtry4cv-smanikanta21s-projects.vercel.app"],
     credentials : true
 }))
 app.use('/auth' , auth)
-app.listen(7777 , () => {
-    console.log(`Server runnning on port 7777`)
-})
+const PORT = process.env.PORT || 7777;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
 
 connectDB()
 .then(() => {
@@ -20,3 +21,4 @@ connectDB()
 }).catch((err) => {
     console.log(err.message)
 })
+
