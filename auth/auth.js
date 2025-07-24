@@ -8,11 +8,11 @@ const { User } = require('../models/User')
 require('dotenv').config()
 auth.use(cookieParser())
 
-router.get('/google',
+auth.get('/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 
-router.get('/google/callback',
+auth.get('/google/callback',
   passport.authenticate('google', {
     successRedirect: 'https://note-abqtry4cv-smanikanta21s-projects.vercel.app/home',
     failureRedirect: 'https://note-abqtry4cv-smanikanta21s-projects.vercel.app/login',
