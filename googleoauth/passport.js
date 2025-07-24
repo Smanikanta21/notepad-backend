@@ -1,40 +1,39 @@
-require('dotenv').config();
-console.log("GOOGLE_CLIENT_ID from env:", process.env.GOOGLE_CLIENT_ID);
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const { User } = require('../models/User'); // make sure User is imported
 
-passport.use(new GoogleStrategy({
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL
+function setupGooglePassport({ clientID, clientSecret, callbackURL }) {
+    passport.use(new GoogleStrategy({
+        clientID,
+        clientSecret,
+        callbackURL
+    },
+    async (accessToken, refreshToken, profile, done) => {
+        const email = profile.emails[0].value;
+        const name = profile.displayName;
+        const profilepic = profile.photos[0].value;
 
-},
-async (accessToken, refreshToken, profile, done) => {
-    const email = profile.emails[0].value;
-    const name = profile.displayName;
-    const profilepic = profile.photos[0].value;
-
-    try{
-        let user = await User.findOne({email});
-        if (!user){
-            user = await User.create({
-                name,email,password:'',profilepic,provider:'google'
-            })
+        try {
+            let user = await User.findOne({ email });
+            if (!user) {
+                user = await User.create({
+                    name, email, password: '', profilepic, provider: 'google'
+                });
+            }
+            return done(null, user);
+        } catch (error) {
+            console.error(error);
+            return done(error);
         }
-        return done(null, user);
-    } catch (error) {
-        console.error(error);
-        return done(error);
-    }
+    }));
+
+    passport.serializeUser((user, done) => {
+        done(null, user);
+    });
+
+    passport.deserializeUser((user, done) => {
+        done(null, user);
+    });
 }
-))
 
-passport.serializeUser((user, done) => {
-    done(null, user);
-})
-
-passport.deserializeUser((user, done) => {
-    // Here you would typically find the user in your database
-    // For now, we will just return the user
-    done(null, user);
-})
+module.exports = setupGooglePassport;

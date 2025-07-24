@@ -2,6 +2,7 @@ const connectDB = require('../database/dbConfig')
 const express = require('express')
 const auth = require('../auth/auth')
 const app = express()
+const setupGooglePassport = require('../googleoauth/passport.js')
 require('../googleoauth/passport.js')
 const passport = require('passport')
 const cors = require('cors')
@@ -26,3 +27,9 @@ connectDB()
     console.log(err.message)
 })
 
+
+setupGooglePassport({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: process.env.GOOGLE_CALLBACK_URL
+});
