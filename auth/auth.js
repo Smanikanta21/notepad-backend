@@ -31,7 +31,7 @@ auth.post('/login' , async (req , res) => {
       if (ourUserArr.length === 0) return res.status(401).send(`Such user does not exist`)
       const isPassword = await bcrypt.compare(password , ourUserArr[0].password)
       if (isPassword) {
-         const token = jwt.sign({ password } , process.env.JWT_SECRET , {expiresIn : '1day'})
+         const token = jwt.sign({ email } , process.env.JWT_SECRET , {expiresIn : '1day'})
          res.cookie(`token` , token , {
             httpOnly : true,
             secure : true,
