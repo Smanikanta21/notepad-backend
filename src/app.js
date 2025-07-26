@@ -20,8 +20,6 @@ app.use(cors({
     origin : ['http://localhost:5173', "https://note-pad-red.vercel.app"],
     origin : ['http://localhost:5173', 'https://note-pad-red.vercel.app'],
 }))
-
-app.use('./notes', notes)
 app.use('/notes', notes)
 app.use(session({
     secret: process.env.JWT_SECRET || 'secret',
@@ -43,25 +41,21 @@ notes.post('/create',UserAuthCheck,async (req, res) => {
     try{
         const note = new Note({ title, user: req.user._id });
         await note.save();
-        // Documenting the structure of the returned note object
-        /**
-         * Response:
-         * {
-         *   message: 'Note created successfully',
-         *   note: {
-         *     _id: String,
-         *     title: String,
-         *     user: String,
-         *     createdAt: Date,
-         *     updatedAt: Date,
-         *     __v: Number
-         *   }
-         * }
-         */
+        console.log('Note created:', note);
         res.status(201).json({message: 'Note created successfully', note});
     } catch (error) {
         console.error(error);
         res.status(500).json({message: 'Internal server error'});
+    }
+})
+
+notes.get('/fetchnotes', UserAuthCheck, async (req, res) => {
+    try {
+        const notes = await Note.find({ user: req.user._id }).sort({ createdAt: -1 });
+        res.status(200).json(notes);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 })
 
