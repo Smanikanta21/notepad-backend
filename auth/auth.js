@@ -23,7 +23,7 @@ auth.get('/google/callback',
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'none'
     });
-    res.redirect('https://note-pad-red.vercel.app');
+    res.redirect('https://note-pad-red.vercel.app/home');
   }
 );
 
