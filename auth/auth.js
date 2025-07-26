@@ -13,17 +13,18 @@ auth.get('/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 
-
 auth.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/login', session: false }),
   (req, res) => {
-    const token = jwt.sign({ _id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ _id: req.user._id }, process.env.JWT_SECRET, {
+      expiresIn: '7d',
+    });
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none'
+      secure: process.env.NODE_ENV === 'production', // true on Render
+      sameSite: 'none',
     });
-    res.redirect('https://note-pad-red.vercel.app/home');
+    res.redirect('https://note-pad-red.vercel.app');
   }
 );
 
@@ -67,10 +68,11 @@ auth.post('/signup' , async (req , res) => {
    }
 })
 auth.post('/logout' , async (req , res) => {
-    req.logout(() => {
-    res.clearCookie('token');
-    res.redirect('https://note-pad-red.vercel.app/login');
-  });
+   return res.status(200).cookie(`token` , null , {
+      expires : new Date(Date.now()),
+      httpOnly : true,
+      secure : true,
+   }).send(`User Logout Successfully`)
 })
 
 module.exports = auth
