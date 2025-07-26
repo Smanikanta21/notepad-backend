@@ -5,7 +5,7 @@ const passport = require('passport');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const auth = express.Router()
-const { User } = require('../models/User')
+const User = require('../models/User')
 require('dotenv').config()
 auth.use(cookieParser())
 
@@ -28,7 +28,7 @@ auth.post('/login' , async (req , res) => {
    }
    try{
       const ourUserArr = await User.find({ email })
-      if (ourUserArr.length === 0) return res.status(401).send(`Such user does not exist`)
+      if (ourUserArr.length === 0) return res.status(404).send(`Such user does not exist`)
       const isPassword = await bcrypt.compare(password , ourUserArr[0].password)
       if (isPassword) {
          const token = jwt.sign({ email } , process.env.JWT_SECRET , {expiresIn : '1day'})
