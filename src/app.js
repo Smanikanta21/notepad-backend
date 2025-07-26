@@ -37,14 +37,13 @@ notes.post('/create',userAuthCheck,async (req, res) => {
     if(!title){
         return res.status(400).json({message: 'Title is required'});
     }
-
     try{
-        const note = new Note({ title, user: req.user._id });
+        const note = new Note({ title : title, user: req.user._id });
         await note.save();
         console.log('Note created:', note);
-        res.status(201).json({message: 'Note created successfully', note});
+        return res.status(201).json({message: 'Note created successfully', note : note});
     } catch (error) {
-        console.error(error);
+        console.error(error.message);
         res.status(500).json({message: 'Internal server error'});
     }
 })
