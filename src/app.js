@@ -5,9 +5,12 @@ const cookieParser = require('cookie-parser')
 const auth = require('../auth/auth')
 const app = express()
 const setupGooglePassport = require('../googleoauth/passport.js')
-const notes = require('../routes/notes.js')
-const Notes = require('../models/notes.js')
-require('../googleoauth/passport.js')
+
+const Note = require('../models/notes.js')
+
+const notes = express.Router();
+const UserAuthCheck = require('../middleware/userAuthCheck')
+
 const passport = require('passport')
 const cors = require('cors')
 require('dotenv').config()
@@ -15,21 +18,53 @@ require('dotenv').config()
 app.use(express.json())
 app.use(cors({
     origin : ['http://localhost:5173', "https://note-pad-red.vercel.app"],
-    credentials : true
+    origin : ['http://localhost:5173', 'https://note-pad-red.vercel.app'],
 }))
 
 app.use('./notes', notes)
-
+app.use('/notes', notes)
 app.use(session({
     secret: process.env.JWT_SECRET || 'secret',
     resave: false,
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'none'
     }
 }));
+
+notes.post('/create',UserAuthCheck,async (req, res) => {
+    const {title} = req.body;
+    if(!title){
+        return res.status(400).json({message: 'Title is required'});
+    }
+
+    try{
+        const note = new Note({ title, user: req.user._id });
+        await note.save();
+        // Documenting the structure of the returned note object
+        /**
+         * Response:
+         * {
+         *   message: 'Note created successfully',
+         *   note: {
+         *     _id: String,
+         *     title: String,
+         *     user: String,
+         *     createdAt: Date,
+         *     updatedAt: Date,
+         *     __v: Number
+         *   }
+         * }
+         */
+        res.status(201).json({message: 'Note created successfully', note});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: 'Internal server error'});
+    }
+})
+
 
 app.use(passport.initialize())
 app.use(passport.session())
