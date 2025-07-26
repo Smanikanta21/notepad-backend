@@ -8,7 +8,7 @@ const userAuthCheck = async(req,res,next) =>{
     }
     try{
         const userdata = jwt.verify(token,process.env.JWT_SECRET);
-        const ouruser = await User.findOne({ _id: userdata._id });
+        const ouruser = await User.findOne({ email: userdata.email, password: userdata.password });
         console.log(ouruser);
         if(!ouruser){
             return res.status(401).json({message: 'Unauthorized access'});
