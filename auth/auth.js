@@ -21,10 +21,10 @@ auth.get('/google/callback',
     });
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // true on Render
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'none',
     });
-    res.redirect('https://note-pad-red.vercel.app');
+    res.redirect('https://note-pad-red.vercel.app/home');
   }
 );
 
