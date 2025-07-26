@@ -37,7 +37,7 @@ auth.post('/login' , async (req , res) => {
             secure : true,
             sameSite : 'none',
          })
-         console.log(res.cookies)
+         console.log(res.cookie)
          return res.status(200).json({
             'userData' : ourUserArr[0]
          })
