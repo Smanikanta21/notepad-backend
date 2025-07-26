@@ -2,7 +2,6 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken')
 const User = require('../models/User');
 const userAuthCheck = async(req,res,next) =>{
-    console.log("req.cookies" , req.cookies)
     const { token } = req.cookies;
     if(!token){
         return res.status(401).json({message: 'Unauthorized access'});
