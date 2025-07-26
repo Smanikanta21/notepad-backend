@@ -9,7 +9,7 @@ const setupGooglePassport = require('../googleoauth/passport.js')
 const Note = require('../models/notes.js')
 
 const notes = express.Router();
-const UserAuthCheck = require('../middleware/userAuthCheck')
+const userAuthCheck = require('../middleware/userAuthCheck')
 
 const passport = require('passport')
 const cors = require('cors')
@@ -32,7 +32,7 @@ app.use(session({
     }
 }));
 
-notes.post('/create',UserAuthCheck,async (req, res) => {
+notes.post('/create',userAuthCheck,async (req, res) => {
     const {title} = req.body;
     if(!title){
         return res.status(400).json({message: 'Title is required'});
@@ -49,7 +49,7 @@ notes.post('/create',UserAuthCheck,async (req, res) => {
     }
 })
 
-notes.get('/fetchnotes', UserAuthCheck, async (req, res) => {
+notes.get('/fetchnotes', userAuthCheck, async (req, res) => {
     try {
         const notes = await Note.find({ user: req.user._id }).sort({ createdAt: -1 });
         res.status(200).json(notes);

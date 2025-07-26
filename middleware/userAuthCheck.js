@@ -2,14 +2,13 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken')
 const User = require('../models/User');
 const userAuthCheck = async(req,res,next) =>{
-    const token = req.cookies && req.cookies.token;
-
+    console.log(req.cookies)
+    if(!token){
+        return res.status(401).json({message: 'Unauthorized access'});
+    }
     try{
-        if(!token){
-            return res.status(401).json({message: 'Unauthorized access'});
-        }
         const userdata = jwt.verify(token,process.env.JWT_SECRET);
-        const ouruser = await User.findById(userdata.id);
+        const ouruser = await User.findById(userdata._id);
         if(!ouruser){
             return res.status(401).json({message: 'Unauthorized access'});
         }
@@ -20,5 +19,5 @@ const userAuthCheck = async(req,res,next) =>{
         return res.status(500).json({message: 'Internal server error'});
     }
 }
-
+``
 module.exports = userAuthCheck;
