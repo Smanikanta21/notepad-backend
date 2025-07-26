@@ -44,7 +44,7 @@ notes.post('/create',userAuthCheck,async (req, res) => {
         return res.status(201).json({message: 'Note created successfully', note : note});
     } catch (error) {
         console.error(error.message);
-        res.status(500).json({message: 'Internal server error'});
+        res.status(500).json({message: error.message});
     }
 })
 

@@ -15,9 +15,8 @@ const userAuthCheck = async(req,res,next) =>{
         req.user = ouruser;
         next();
     }catch(error){
-        console.error(error.message);
-        return res.status(500).json({message: 'Internal server error'});
+        return res.status(500).json({message: error.message});
     }
 }
-``
+
 module.exports = userAuthCheck;
