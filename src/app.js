@@ -5,7 +5,8 @@ const cookieParser = require('cookie-parser')
 const auth = require('../auth/auth')
 const app = express()
 const setupGooglePassport = require('../googleoauth/passport.js')
-const noteRoutes = require('../routes/notes.js')
+const notes = require('../routes/notes.js')
+const Notes = require('../models/notes.js')
 require('../googleoauth/passport.js')
 const passport = require('passport')
 const cors = require('cors')
@@ -17,7 +18,7 @@ app.use(cors({
     credentials : true
 }))
 
-app.use('./notes', noteRoutes)
+app.use('./notes', notes)
 
 app.use(session({
     secret: process.env.JWT_SECRET || 'secret',
