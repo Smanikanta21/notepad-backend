@@ -32,7 +32,11 @@ auth.post('/login' , async (req , res) => {
       const isPassword = await bcrypt.compare(password , ourUserArr[0].password)
       if (isPassword) {
          const token = jwt.sign({ password } , process.env.JWT_SECRET , {expiresIn : '1day'})
-         res.cookie(`token` , token)
+         res.cookie(`token` , token , {
+            httpOnly : true,
+            secure : true,
+            sameSite : 'none',
+         })
          return res.status(200).json({
             'userData' : ourUserArr[0]
          })
