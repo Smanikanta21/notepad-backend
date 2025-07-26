@@ -17,8 +17,8 @@ require('dotenv').config()
 
 app.use(express.json())
 app.use(cors({
-    origin : ['http://localhost:5173', "https://note-pad-red.vercel.app"],
     origin : ['http://localhost:5173', 'https://note-pad-red.vercel.app'],
+    credentials: true,
 }))
 app.use('/notes', notes)
 app.use(session({
