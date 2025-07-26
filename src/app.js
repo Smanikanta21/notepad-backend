@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser')
 const auth = require('../auth/auth')
 const app = express()
 const setupGooglePassport = require('../googleoauth/passport.js')
+const noteRoutes = require('../routes/notes.js')
 require('../googleoauth/passport.js')
 const passport = require('passport')
 const cors = require('cors')
@@ -15,6 +16,8 @@ app.use(cors({
     origin : ['http://localhost:5173', "https://note-pad-red.vercel.app"],
     credentials : true
 }))
+
+app.use('./notes', noteRoutes)
 
 app.use(session({
     secret: process.env.JWT_SECRET || 'secret',
