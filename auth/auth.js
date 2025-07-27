@@ -39,15 +39,22 @@ auth.post('/login' , async (req , res) => {
       if (ourUserArr.length === 0) return res.status(404).send(`Such user does not exist`)
       const isPassword = await bcrypt.compare(password , ourUserArr[0].password)
       if (isPassword) {
-         const token = jwt.sign({ email } , process.env.JWT_SECRET , {expiresIn : '1day'})
+         const token = jwt.sign({ _id: ourUserArr[0]._id } , process.env.JWT_SECRET , {expiresIn : '1day'})
          res.cookie(`token` , token , {
             httpOnly : true,
-            secure : true,
+            secure : process.env.NODE_ENV === 'production',
             sameSite : 'none',
          })
          console.log(res.cookie)
          return res.status(200).json({
-            'userData' : ourUserArr[0]
+            message: 'Login successful',
+            userData: {
+               _id: ourUserArr[0]._id,
+               name: ourUserArr[0].name,
+               email: ourUserArr[0].email,
+               profilepic: ourUserArr[0].profilepic,
+               provider: ourUserArr[0].provider
+            }
          })
       }return res.status(401).send(`Password is Incorrect`)
    }catch(err){
@@ -61,14 +68,39 @@ auth.post('/signup' , async (req , res) => {
    try{
       const hashedPassword = await bcrypt.hash(password , 10)
       const newUser = new User({name , email , password : hashedPassword})
-      await newUser.save()
-      return res.status(201).send(`User Creatated Successfully`)
+      const savedUser = await newUser.save()
+      return res.status(201).json({
+         message: 'User created successfully',
+         userData: {
+            _id: savedUser._id,
+            name: savedUser.name,
+            email: savedUser.email,
+            profilepic: savedUser.profilepic,
+            provider: savedUser.provider
+         }
+      })
    }catch(err){
       console.log(err.message)
       return res.status(500).send(`Internal Server Error`)
    }
 })
 
+// Check if user is authenticated
+auth.get('/me', userAuthCheck, async (req, res) => {
+   try {
+      const user = await User.findById(req.user._id).select('-password');
+      if (!user) {
+         return res.status(404).json({ message: 'User not found' });
+      }
+      return res.status(200).json({
+         message: 'User authenticated',
+         user: user
+      });
+   } catch (err) {
+      console.log(err.message);
+      return res.status(500).json({ message: 'Internal Server Error' });
+   }
+});
 
 auth.get('/profile', userAuthCheck, async (req, res) => {
    try {
@@ -158,7 +190,8 @@ auth.post('/logout' , async (req , res) => {
    return res.status(200).cookie(`token` , null , {
       expires : new Date(Date.now()),
       httpOnly : true,
-      secure : true,
+      secure : process.env.NODE_ENV === 'production',
+      sameSite: 'none'
    }).send(`User Logout Successfully`)
 })
 
